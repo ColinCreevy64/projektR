@@ -125,8 +125,8 @@ class Rook(Piece):
                 if valid_moves[i] == 1:
                     attacking[i] = i * 8 + self.j
             if i > self.i:
-                if valid_moves[i+7] == 1:                 
-                    attacking[i+7] == i * 8 + self.j
+                if valid_moves[i-1+7] == 1:                 
+                    attacking[i-1+7] == i * 8 + self.j
 
             # calculate horizontal
             if i != self.i:
@@ -260,14 +260,14 @@ class Queen(Piece):
     def valid_positions(self, board):
         rook = Rook(self.i, self.j, self.side)
         bishop = Bishop(self.i, self.j, self.side)
-        self.valid_moves[0] = rook.valid_positions_public(board, self.valid_moves)
-        self.valid_moves[1] = bishop.valid_positions_public(board, self.valid_moves)
+        self.valid_moves[0] = rook.valid_positions_public(board, self.valid_moves[0])
+        self.valid_moves[1] = bishop.valid_positions_public(board, self.valid_moves[1])
 
     def calc_attacking(self):
         rook = Rook(self.i, self.j, self.side)
         bishop = Bishop(self.i, self.j, self.side)
-        self.attacking[0] = rook.calc_attacking_public(self.valid_moves, self.attacking)
-        self.attacking[1] = bishop.calc_attacking_public(self.valid_moves, self.attacking)
+        self.attacking[0] = rook.calc_attacking_public(self.valid_moves[0], self.attacking[0])
+        self.attacking[1] = bishop.calc_attacking_public(self.valid_moves[0], self.attacking[1])
 
 class King(Piece):
     def __init__(self, i, j, side):
@@ -279,11 +279,15 @@ class King(Piece):
 
     def valid_positions(self, board, pieces):
         possible = [-1] * 8
+        offset = 0
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if i != 0 and j != 0:
-                    if self.valid_position(self.i+i, self.j+j, board):
-                            possible[(i+1) * 3 + (j+1)] = (self.i+i) * 8 + (self.j+j)
+                    if self.valid_position(self.i+i, self.j+j):
+                            if self.occupied(self.i+i, self.j+j, board) <= 0:
+                                possible[(i+1) * 3 + (j+1) - offset] = (self.i+i) * 8 + (self.j+j)
+                else:
+                    offset = 1
 
         for piece in pieces:
             if piece == self:
@@ -301,9 +305,12 @@ class King(Piece):
 
     def calc_attacking(self, board):
         self.attacking = [-1] * 8
+        offset = 0
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if i != 0 and j != 0:
-                    if self.valid_position(self.i+i, self.j+j, board):
-                            self.attacking[(i+1) * 3 + (j+1)] = (self.i+i) * 8 + (self.j+j) 
+                    if self.valid_position(self.i+i, self.j+j):
+                            self.attacking[(i+1) * 3 + (j+1) - offset] = (self.i+i) * 8 + (self.j+j) 
+                else:
+                    offset = 1
             
