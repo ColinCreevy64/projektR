@@ -218,6 +218,10 @@ class Chess:
                 if piece.show == move[1]:
                     k = 7 - (int(move[2][1]) - 1)
                     l = ord(move[2][0]) - ord('A') 
+                    if piece.side == -1:
+                        k = 7 - k
+                        l = 7 - l
+
                     if k * 8 + l in piece.attacking:
                         move_index = piece.attacking.index(k * 8 + l)
 
@@ -231,6 +235,9 @@ class Chess:
                 if p.abs-1 == piece:
                     k = 7 - (p.attacking[move_index] // 8)
                     l = p.attacking[move_index] % 8
+                    if p.side == -1:
+                        k = 7 - k
+                        l = 7 - l
 
                     move += chr(ord('A') + j)
                     move += str(8 - i)
@@ -242,18 +249,16 @@ class Chess:
 
         return False
 
-
-
 chess = Chess()
 chess.initialization()
 for piece in chess.pieces:
     print(piece.attacking)
 chess.position_print()
-a = chess.move_to_code('d2pd3')
-# if a:
-#     print(chess.code_to_move(a[0], a[1], a[2], a[3]))
-# else:
-#     print(a)
+a = chess.move_to_code('b7pb6')
+if a:
+    print(chess.code_to_move(a[0], a[1], a[2], a[3]))
+else:
+    print(a)
 
 
 
