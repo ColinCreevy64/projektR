@@ -1,4 +1,4 @@
-import pieces as p
+import pieces as P
 
 ''' moves list (rows 8 to 1)
         default check from top left to bottom right
@@ -86,76 +86,76 @@ class Chess:
     def initialization(self):
         # pjesaci
         for i in range(8):
-            pawn = p.Pawn(1, i, -1)
+            pawn = P.Pawn(1, i, -1)
             self.pieces.append(pawn)
             self.board0[8 + i] = pawn.side * pawn.abs
             self.board1[55 - i] = -1 * pawn.side * pawn.abs
 
-            pawn = p.Pawn(6, i, 1)
+            pawn = P.Pawn(6, i, 1)
             self.pieces.append(pawn)
             self.board0[48 + i] = pawn.side * pawn.abs
             self.board1[15 - i] = -1 * pawn.side * pawn.abs
 
         # kule
         for i in [0, 7]:
-            rook = p.Rook(0, i, -1)
+            rook = P.Rook(0, i, -1)
             self.pieces.append(rook)
             self.board0[i] = rook.side * rook.abs
             self.board1[63 - i] = -1 * rook.side * rook.abs
 
-            rook = p.Rook(7, i, 1)
+            rook = P.Rook(7, i, 1)
             self.pieces.append(rook)
             self.board0[56 + i] = rook.side * rook.abs
             self.board1[7 - i] = -1 * rook.side * rook.abs
 
         # konji
         for i in [1, 6]:
-            knight = p.Knight(0, i, -1)
+            knight = P.Knight(0, i, -1)
             self.pieces.append(knight)
             self.board0[i] = knight.side * knight.abs
             self.board1[63 - i] = -1 * knight.side * knight.abs
 
-            knight = p.Knight(7, i, 1)
+            knight = P.Knight(7, i, 1)
             self.pieces.append(knight)
             self.board0[56 + i] = knight.side * knight.abs
             self.board1[7 - i] = -1 * knight.side * knight.abs      
 
         # lovci
         for i in [2, 5]:
-            bishop = p.Bishop(0, i, -1)
+            bishop = P.Bishop(0, i, -1)
             self.pieces.append(bishop)
             self.board0[i] = bishop.side * bishop.abs
             self.board1[63 - i] = -1 * bishop.side * bishop.abs
 
-            bishop = p.Bishop(7, i, 1)
+            bishop = P.Bishop(7, i, 1)
             self.pieces.append(bishop)
             self.board0[56 + i] = bishop.side * bishop.abs
             self.board1[7 - i] = -1 * bishop.side * bishop.abs
 
         # kraljice
-        queen = p.Queen(0, 3, -1)
+        queen = P.Queen(0, 3, -1)
         self.pieces.append(queen)
         self.board0[3] = queen.side * queen.abs
         self.board1[59] = -1 * queen.side * queen.abs
 
-        queen = p.Queen(7, 3, 1)
+        queen = P.Queen(7, 3, 1)
         self.pieces.append(queen)
         self.board0[59] = queen.side * queen.abs
         self.board1[3] = -1 * queen.side * queen.abs
 
         # kralj
-        king = p.King(0, 4, -1)
+        king = P.King(0, 4, -1)
         self.pieces.append(king)
         self.board0[4] = king.side * king.abs
         self.board1[60] = -1 * king.side * king.abs
 
-        king = p.King(7, 4, 1)
+        king = P.King(7, 4, 1)
         self.pieces.append(king)
         self.board0[60] = king.side * king.abs
         self.board1[4] = -1 * king.side * king.abs
 
         for piece in self.pieces:
-            if isinstance(piece, p.King):
+            if isinstance(piece, P.King):
                 if piece.side == -1:
                     piece.valid_positions(self.board1, self.pieces)
                     piece.calc_attacking(self.board1)
@@ -194,7 +194,7 @@ class Chess:
 
         for piece in self.pieces:
             if piece.side == 1:
-                if isinstance(piece, p.Pawn):
+                if isinstance(piece, P.Pawn):
                     valid[piece.abs-1][piece.i-1][piece.j][:] = piece.valid_moves
                 else:
                     valid[piece.abs-1][piece.i][piece.j][:] = piece.valid_moves
@@ -246,6 +246,19 @@ class Chess:
 
         return False
 
+    def calc_dependencies(self, i, j):
+        dependent = []
+
+        for piece in self.pieces:
+            if piece.side == -1:
+                if ((7-i) * 8 + (7-j)) in piece.attacking or -1 * ((7-i) * 8 + (7-j)) in piece.attacking:
+                    dependent.append(piece)
+            else:
+                if (i * 8 + j) in piece.attacking or -1 * (i * 8 + j) in piece.attacking:
+                    dependent.append(piece)
+
+        return dependent
+
     def move(self, piece, i, j, move_index, player_side):
         for p in self.pieces:
             if p.abs-1 == piece and p.i == i and p.j == j and p.side == player_side:
@@ -261,6 +274,9 @@ class Chess:
                             self.pieces.remove(remove)
                             break
 
+                    dependent = self.calc_dependencies(p.i, p.j)
+                    dependent.extend(self.calc_dependencies(k, l))
+
                     self.board0[p.i * 8 + p.j] = 0
                     self.board1[(7-p.i) * 8 + (7-p.j)] = 0
                     p.i = k
@@ -268,26 +284,18 @@ class Chess:
                     self.board0[p.i * 8 + p.j] = p.side * p.abs
                     self.board1[(7-p.i) * 8 + (7-p.j)] = p.side * p.abs
 
-                    if p.side == -1:
-                        p.valid_positions(self.board1)
-                    else:
-                        p.valid_positions(self.board0)
-                    p.calc_attacking()
-
-                    for d in p.dependencies:
+                    for d in dependent:
+                        if isinstance(d, P.King):
+                            continue
                         if d.side == -1:
                             d.valid_positions(self.board1)
                         else:
                             d.valid_positions(self.board0)
                         d.calc_attacking()
-
-                    for calc in self.pieces:
-                        if (k * 8 + l) in calc.attacking:
-                            if calc.side == -1:
-                                calc.valid_positions(self.board1)
-                            else:
-                                calc.valid_positions(self.board0)
-                            calc.calc_attacking()
+                    self.pieces[-2].valid_positions(self.board1, self.pieces)
+                    self.pieces[-2].calc_attacking(self.board1)
+                    self.pieces[-1].valid_positions(self.board0, self.pieces)
+                    self.pieces[-1].calc_attacking(self.board0)
 
                 return True
 
@@ -301,8 +309,6 @@ class Chess:
             return self.move(*code, player_side)
 
         return False
-
-
 
 chess = Chess()
 chess.initialization()
