@@ -64,14 +64,14 @@ class Chess:
             ],
             # queen
             [
-                [*([[0] * 14 for i in range(8)] for j in range(8))],
-                [[[0] * 7 for i in range(8)], 
+                *([[0] * 14 for i in range(8)] for j in range(8)),
+                [[0] * 7 for i in range(8)], 
                 [[0] * 7] + [[0] * 9 for i in range(6)] + [[0] * 7],
                 [[0] * 7] + [[0] * 9] + [[0] * 11 for i in range(4)] + [[0] * 9] + [[0] * 7],
                 *([[[0] * 7] + [[0] * 9] + [[0] * 11] + [[0] * 13 for i in range(2)] + [[0] * 11] + [[0] * 9] + [[0] * 7] for j in range(2)]),           
                 [[0] * 7] + [[0] * 9] + [[0] * 11 for i in range(4)] + [[0] * 9] + [[0] * 7],   
                 [[0] * 7] + [[0] * 9 for i in range(6)] + [[0] * 7],
-                [[0] * 7 for i in range(8)]]
+                [[0] * 7 for i in range(8)]
             ],
             # king
             [
@@ -196,9 +196,6 @@ class Chess:
             if piece.side == 1:
                 if isinstance(piece, p.Pawn):
                     valid[piece.abs-1][piece.i-1][piece.j][:] = piece.valid_moves
-                elif isinstance(piece, p.Queen):
-                    valid[piece.abs-1][0][piece.i][piece.j][:] = piece.valid_moves[0]
-                    valid[piece.abs-1][1][piece.i][piece.j][:] = piece.valid_moves[1]
                 else:
                     valid[piece.abs-1][piece.i][piece.j][:] = piece.valid_moves
 
@@ -305,8 +302,9 @@ class Chess:
 chess = Chess()
 chess.initialization()
 chess.position_print()
-print(chess.move(0, 5, 0, 3))
-chess.position_print()
+# print(chess.move(0, 5, 0, 3))
+# chess.position_print()
+
 
 
 

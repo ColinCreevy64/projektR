@@ -308,22 +308,22 @@ class Bishop(Piece):
 class Queen(Piece):
     def __init__(self, i, j, side):
         super().__init__(i, j, side)
-        self.valid_moves = [[0] * 14, [0] * 13]
-        self.attacking = [[-1] * 14, [-1] * 13]
+        self.valid_moves = [0] * 14 + [0] * 13
+        self.attacking = [-1] * 14 + [-1] * 13
         self.abs = 5
         self.show = 'Q'
 
     def valid_positions(self, board):
         rook = Rook(self.i, self.j, self.side)
         bishop = Bishop(self.i, self.j, self.side)
-        self.valid_moves[0] = rook.valid_positions_public(board, self.valid_moves[0])
-        self.valid_moves[1] = bishop.valid_positions_public(board, self.valid_moves[1])
+        self.valid_moves[:14] = rook.valid_positions_public(board, self.valid_moves[:14])
+        self.valid_moves[14:] = bishop.valid_positions_public(board, self.valid_moves[14:])
 
     def calc_attacking(self):
         rook = Rook(self.i, self.j, self.side)
         bishop = Bishop(self.i, self.j, self.side)
-        self.attacking[0] = rook.calc_attacking_public(self.valid_moves[0], self.attacking[0])
-        self.attacking[1] = bishop.calc_attacking_public(self.valid_moves[0], self.attacking[1])
+        self.attacking[:14] = rook.calc_attacking_public(self.valid_moves[:14], self.attacking[:14])
+        self.attacking[14:] = bishop.calc_attacking_public(self.valid_moves[14:], self.attacking[14:])
 
 class King(Piece):
     def __init__(self, i, j, side):
