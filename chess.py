@@ -276,6 +276,7 @@ class Chess:
 
                     dependent = self.calc_dependencies(p.i, p.j)
                     dependent.extend(self.calc_dependencies(k, l))
+                    print(dependent)
 
                     self.board0[p.i * 8 + p.j] = 0
                     self.board1[(7-p.i) * 8 + (7-p.j)] = 0

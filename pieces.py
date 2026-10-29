@@ -308,27 +308,27 @@ class Bishop(Piece):
             # calculate upper left
             if i < ul:
                 if valid_moves[i] == 1:
-                    attacking[i] = (mod_i-i) * 8 + (mod_j-i)
+                    attacking[i] = (mod_i-i-1) * 8 + (mod_j-i-1)
                 elif valid_moves[i] == -1:
-                    attacking[i] = -1 * ((mod_i-i) * 8 + (mod_j-i))
+                    attacking[i] = -1 * ((mod_i-i-1) * 8 + (mod_j-i-1))
             # calculate upper right
             if i < ur:
                 if valid_moves[i+ul] == 1:
-                    attacking[i+ul] = (mod_i-i) * 8 + (mod_j+i)
+                    attacking[i+ul] = (mod_i-i-1) * 8 + (mod_j+i+1)
                 elif valid_moves[i+ul] == -1:
-                    attacking[i+ul] = -1 * ((mod_i-i) * 8 + (mod_j+i))
+                    attacking[i+ul] = -1 * ((mod_i-i-1) * 8 + (mod_j+i+1))
             # calculate bottom left
             if i < bl:
                 if valid_moves[i+ul+ur] == 1:
-                    attacking[i+ul+ur] = (mod_i+i) * 8 + (mod_j-i)
+                    attacking[i+ul+ur] = (mod_i+i+1) * 8 + (mod_j-i-1)
                 elif valid_moves[i+ul+ur] == -1:
-                    attacking[i+ul+ur] = -1 * ((mod_i+i) * 8 + (mod_j-i))
+                    attacking[i+ul+ur] = -1 * ((mod_i+i+1) * 8 + (mod_j-i-1))
             # calculate bottom right
             if i < br:
                 if valid_moves[i+ul+ur+bl] == 1:
-                    attacking[i+ul+ur+bl] = (mod_i+i) * 8 + (mod_j+i)
+                    attacking[i+ul+ur+bl] = (mod_i+i+1) * 8 + (mod_j+i+1)
                 elif valid_moves[i+ul+ur+bl] == -1:
-                    attacking[i+ul+ur+bl] = -1 * ((mod_i+i) * 8 + (mod_j+i))
+                    attacking[i+ul+ur+bl] = -1 * ((mod_i+i+1) * 8 + (mod_j+i+1))
 
         return attacking
 
