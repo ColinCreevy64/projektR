@@ -249,16 +249,65 @@ class Chess:
 
         return False
 
+    def move(self, piece, i, j, move_index):
+        valid = self.valid_moves()
+        pawn = 0
+        if piece == 0:
+            pawn = 1
+    
+        if valid[piece][i][j][move_index] == 1:
+            for p in self.pieces:
+                if p.abs-1 == piece and p.i == i-pawn and p.j == j:
+                    k = p.attacking[move_index] // 8
+                    l = p.attacking[move_index] % 8
+                    if p.side == -1:
+                        k = 7 - k
+                        l = 7 - l
+
+                    for remove in self.pieces:
+                        if remove.i == k and remove.j == l:
+                            self.pieces.remove(remove)
+                            break
+
+                    self.board0[p.i * 8 + p.j] = 0
+                    self.board1[(7-p.i) * 8 + (7-p.j)] = 0
+                    p.i = k
+                    p.j = l
+                    self.board0[p.i * 8 + p.j] = p.side * p.abs
+                    self.board1[(7-p.i) * 8 + (7-p.j)] = p.side * p.abs
+
+                    if p.side == -1:
+                        p.valid_positions(self.board1)
+                    else:
+                        p.valid_positions(self.board0)
+                    p.calc_attacking()
+
+                    for d in p.dependencies:
+                        if d.side == -1:
+                            d.valid_positions(self.board1)
+                        else:
+                            d.valid_positions(self.board0)
+                        d.calc_attacking()
+
+                    for calc in self.pieces:
+                        if (k * 8 + l) in calc.attacking:
+                            if calc.side == -1:
+                                calc.valid_positions(self.board1)
+                            else:
+                                calc.valid_positions(self.board0)
+                            calc.calc_attacking()
+
+            return True
+
+        return False
+
+
 chess = Chess()
 chess.initialization()
-for piece in chess.pieces:
-    print(piece.attacking)
 chess.position_print()
-a = chess.move_to_code('b7pb6')
-if a:
-    print(chess.code_to_move(a[0], a[1], a[2], a[3]))
-else:
-    print(a)
+print(chess.move(0, 5, 0, 3))
+chess.position_print()
+
 
 
 
