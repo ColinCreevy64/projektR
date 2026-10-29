@@ -35,26 +35,40 @@ class Pawn(Piece):
         self.show = 'P'
 
     def valid_positions(self, board):
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
         for i in range(3):
-            if self.valid_position(self.i-1, self.j-1+i):
+            if self.valid_position(mod_i-1, mod_j-1+i):
                 self.valid_moves[i] = -1
-        if self.valid_moves[0] and self.occupied(self.i-1, self.j-1, board) == -1:
+        if self.valid_moves[0] and self.occupied(mod_i-1, mod_j-1, board) == -1:
             self.valid_moves[0] = 1
-        if self.valid_moves[1] and self.occupied(self.i-1, self.j, board) == 0:
+        if self.valid_moves[1] and self.occupied(mod_i-1, mod_j, board) == 0:
             self.valid_moves[1] = 1
-        if self.valid_moves[2] and self.occupied(self.i-1, self.j+1, board) == -1:
+        if self.valid_moves[2] and self.occupied(mod_i-1, mod_j+1, board) == -1:
             self.valid_moves[2] = 1
 
-        if self.i == 6:
+        if mod_i == 6:
             self.valid_moves[3] = -1
-            if self.occupied(self.i-2, self.j, board) == 0:
+            if self.occupied(mod_i-2, mod_j, board) == 0:
                 self.valid_moves[3] = 1
 
     def calc_attacking(self):
-        position = self.i * 8 + self.j
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
+        position = mod_i * 8 + mod_j
         for i in range(-1, 2):
             if self.valid_moves[i+1] == 1:
-                self.attacking[i+1] == position - 8 + i
+                self.attacking[i+1] = position - 8 + i
         if self.valid_moves[3] == 1:
             self.attacking[3] = position - 16
 
@@ -67,49 +81,56 @@ class Rook(Piece):
         self.show = 'R'
 
     def valid_positions_public(self, board, valid_moves):
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
         incrementX = 0
         incrementY = 0
         checked = 0
 
         # check above
-        occ = self.occupied(self.i-(incrementX+1), self.j, board)
-        while self.valid_position(self.i-(incrementX+1), self.j) and occ <= 0:
+        occ = self.occupied(mod_i-(incrementX+1), mod_j, board)
+        while self.valid_position(mod_i-(incrementX+1), mod_j) and occ <= 0:
             incrementX += 1
             if occ == -1:
                 break
-            occ = self.occupied(self.i-(incrementX+1), self.j, board)
-        for i in range(self.i-incrementX, self.i):
+            occ = self.occupied(mod_i-(incrementX+1), mod_j, board)
+        for i in range(mod_i-incrementX, mod_i):
             valid_moves[checked + i] = 1
-        checked += self.i
+        checked += mod_i
         # check left
-        occ = self.occupied(self.i, self.j-(incrementY+1), board)
-        while self.valid_position(self.i, self.j-(incrementY+1)) and occ <= 0:
+        occ = self.occupied(mod_i, mod_j-(incrementY+1), board)
+        while self.valid_position(mod_i, mod_j-(incrementY+1)) and occ <= 0:
             incrementY += 1
             if occ == -1:
                 break
-            occ = self.occupied(self.i, self.j-(incrementY+1), board)
-        for i in range(self.j-incrementY, self.j):
+            occ = self.occupied(mod_i, mod_j-(incrementY+1), board)
+        for i in range(mod_j-incrementY, mod_j):
             valid_moves[checked + i] = 1
-        checked += self.j
+        checked += mod_j
         # check right
         incrementX = 0
         incrementY = 0
-        occ = self.occupied(self.i, self.j+(incrementY+1), board)
-        while self.valid_position(self.i, self.j+(incrementY+1)) and occ <= 0:
+        occ = self.occupied(mod_i, mod_j+(incrementY+1), board)
+        while self.valid_position(mod_i, mod_j+(incrementY+1)) and occ <= 0:
             incrementY += 1
             if occ == -1:
                 break
-            occ = self.occupied(self.i, self.j+(incrementY+1), board)
+            occ = self.occupied(mod_i, mod_j+(incrementY+1), board)
         for i in range(incrementY):
             valid_moves[checked + i] = 1
-        checked += 7 - self.j
+        checked += 7 - mod_j
         # check below
-        occ = self.occupied(self.i+(incrementX+1), self.j, board)
-        while self.valid_position(self.i+(incrementX+1), self.j) and occ <= 0:
+        occ = self.occupied(mod_i+(incrementX+1), mod_j, board)
+        while self.valid_position(mod_i+(incrementX+1), mod_j) and occ <= 0:
             incrementX += 1
             if occ == -1:
                 break
-            occ = self.occupied(self.i+(incrementX+1), self.j, board)
+            occ = self.occupied(mod_i+(incrementX+1), mod_j, board)
         for i in range(incrementX):
             valid_moves[checked + i] = 1
 
@@ -119,19 +140,26 @@ class Rook(Piece):
         self.valid_positions_public(board, self.valid_moves)
 
     def calc_attacking_public(self, valid_moves, attacking):
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
         for i in range(8):
             # calculate vertical
-            if i < self.i:
+            if i < mod_i:
                 if valid_moves[i] == 1:
-                    attacking[i] = i * 8 + self.j
-            if i > self.i:
+                    attacking[i] = i * 8 + mod_j
+            if i > mod_i:
                 if valid_moves[i-1+7] == 1:                 
-                    attacking[i-1+7] == i * 8 + self.j
+                    attacking[i-1+7] == i * 8 + mod_j
 
             # calculate horizontal
-            if i != self.i:
-                if valid_moves[i+self.i] == 1:
-                    attacking[i+self.i] == self.i * 8 + i
+            if i != mod_i:
+                if valid_moves[i+mod_i] == 1:
+                    attacking[i+mod_i] == mod_i * 8 + i
 
         return attacking
 
@@ -147,7 +175,14 @@ class Knight(Piece):
         self.show = 'H'
 
     def valid_positions(self, board):
-        possible_moves = [[self.i-2, self.j-1], [self.i-2, self.j+1], [self.i-1, self.j-2], [self.i-1, self.j+2], [self.i+1, self.j-2], [self.i+1, self.j+2], [self.i+2, self.j-1], [self.i+2, self.j+1]]
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
+        possible_moves = [[mod_i-2, mod_j-1], [mod_i-2, mod_j+1], [mod_i-1, mod_j-2], [mod_i-1, mod_j+2], [mod_i+1, mod_j-2], [mod_i+1, mod_j+2], [mod_i+2, mod_j-1], [mod_i+2, mod_j+1]]
 
         for i in range(8):
             if self.valid_position(possible_moves[i][0], possible_moves[i][1]):
@@ -157,7 +192,14 @@ class Knight(Piece):
 
             
     def calc_attacking(self):
-        possible_moves = [[self.i-2, self.j-1], [self.i-2, self.j+1], [self.i-1, self.j-2], [self.i-1, self.j+2], [self.i+1, self.j-2], [self.i+1, self.j+2], [self.i+2, self.j-1], [self.i+2, self.j+1]]
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
+        possible_moves = [[mod_i-2, mod_j-1], [mod_i-2, mod_j+1], [mod_i-1, mod_j-2], [mod_i-1, mod_j+2], [mod_i+1, mod_j-2], [mod_i+1, mod_j+2], [mod_i+2, mod_j-1], [mod_i+2, mod_j+1]]
 
         for i in range(8):
             if self.valid_moves[i] == 1:
@@ -172,47 +214,54 @@ class Bishop(Piece):
         self.show = 'B'
 
     def valid_positions_public(self, board, valid_moves):
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
         increment = 0
         checked = 0
 
         # check upper left
-        occ = self.occupied(self.i-(increment+1), self.j-(increment+1), board)
-        while self.valid_position(self.i-(increment+1), self.j-(increment+1)) and occ <= 0:
+        occ = self.occupied(mod_i-(increment+1), mod_j-(increment+1), board)
+        while self.valid_position(mod_i-(increment+1), mod_j-(increment+1)) and occ <= 0:
             increment += 1
             if occ == -1:
                 break
-            occ = self.occupied(self.i-(increment+1), self.j-(increment+1), board)
+            occ = self.occupied(mod_i-(increment+1), mod_j-(increment+1), board)
         for i in range(increment):
             valid_moves[checked + i] = 1
-        checked += min(self.i, self.j)
+        checked += min(mod_i, mod_j)
         increment = 0
         # check upper right
-        occ = self.occupied(self.i-(increment+1), self.j+(increment+1), board)
-        while self.valid_position(self.i-(increment+1), self.j+(increment+1)) and occ <= 0:
+        occ = self.occupied(mod_i-(increment+1), mod_j+(increment+1), board)
+        while self.valid_position(mod_i-(increment+1), mod_j+(increment+1)) and occ <= 0:
             increment += 1
             if occ == -1:
                 break
-            occ = self.occupied(self.i-(increment+1), self.j+(increment+1), board)
+            occ = self.occupied(mod_i-(increment+1), mod_j+(increment+1), board)
         for i in range(increment):
             valid_moves[checked + i] = 1
-        checked += min(self.i, 7-self.j)
+        checked += min(mod_i, 7-mod_j)
         # check lower left
-        occ = self.occupied(self.i+(increment+1), self.j-(increment+1), board)
-        while self.valid_position(self.i+(increment+1), self.j-(increment+1)) and occ <= 0:
+        occ = self.occupied(mod_i+(increment+1), mod_j-(increment+1), board)
+        while self.valid_position(mod_i+(increment+1), mod_j-(increment+1)) and occ <= 0:
             increment += 1
             if occ == -1:
                 break
-            occ = self.occupied(self.i+(increment+1), self.j-(increment+1), board)
+            occ = self.occupied(mod_i+(increment+1), mod_j-(increment+1), board)
         for i in range(increment):
             valid_moves[checked + i] = 1
-        checked += min(7-self.i, self.j)
+        checked += min(7-mod_i, mod_j)
         # check lower right
-        occ = self.occupied(self.i+(increment+1), self.j+(increment+1), board)
-        while self.valid_position(self.i+(increment+1), self.j+(increment+1)) and occ <= 0:
+        occ = self.occupied(mod_i+(increment+1), mod_j+(increment+1), board)
+        while self.valid_position(mod_i+(increment+1), mod_j+(increment+1)) and occ <= 0:
             increment += 1
             if occ == -1:
                 break
-            occ = self.occupied(self.i+(increment+1), self.j+(increment+1), board)
+            occ = self.occupied(mod_i+(increment+1), mod_j+(increment+1), board)
         for i in range(increment):
             valid_moves[checked + i] = 1
 
@@ -222,27 +271,34 @@ class Bishop(Piece):
         self.valid_positions_public(board, self.valid_moves)
 
     def calc_attacking_public(self, valid_moves, attacking):
-        ul = min(self.i, self.j)
-        ur = min(self.i, 7-self.j)
-        bl = min(7-self.i, self.j)
-        br = min(7-self.i, 7-self.j)
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
+        ul = min(mod_i, mod_j)
+        ur = min(mod_i, 7-mod_j)
+        bl = min(7-mod_i, mod_j)
+        br = min(7-mod_i, 7-mod_j)
         for i in range(7):
             # calculate upper left
             if i < ul:
                 if valid_moves[i] == 1:
-                    attacking[i] = (self.i-i) * 8 + (self.j-i)
+                    attacking[i] = (mod_i-i) * 8 + (mod_j-i)
             # calculate upper right
             if i < ur:
                 if valid_moves[i+ul] == 1:
-                    attacking[i+ul] = (self.i-i) * 8 + (self.j+i)
+                    attacking[i+ul] = (mod_i-i) * 8 + (mod_j+i)
             # calculate bottom left
             if i < bl:
                 if valid_moves[i+ul+ur] == 1:
-                    attacking[i+ul+ur] = (self.i+i) * 8 + (self.j-i)
+                    attacking[i+ul+ur] = (mod_i+i) * 8 + (mod_j-i)
             # calculate bottom right
             if i < br:
                 if valid_moves[i+ul+ur+bl] == 1:
-                    attacking[i+ul+ur+bl] = (self.i+i) * 8 + (self.j+i)
+                    attacking[i+ul+ur+bl] = (mod_i+i) * 8 + (mod_j+i)
 
         return attacking
 
@@ -278,19 +334,26 @@ class King(Piece):
         self.show = 'K'
 
     def valid_positions(self, board, pieces):
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
         possible = [-1] * 8
         offset = 0
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if i != 0 and j != 0:
-                    if self.valid_position(self.i+i, self.j+j):
-                            if self.occupied(self.i+i, self.j+j, board) <= 0:
-                                possible[(i+1) * 3 + (j+1) - offset] = (self.i+i) * 8 + (self.j+j)
+                    if self.valid_position(mod_i+i, mod_j+j):
+                            if self.occupied(mod_i+i, mod_j+j, board) <= 0:
+                                possible[(i+1) * 3 + (j+1) - offset] = (mod_i+i) * 8 + (mod_j+j)
                 else:
                     offset = 1
 
         for piece in pieces:
-            if piece == self:
+            if piece.side == self.side or piece == self:
                 continue
             else:
                 if all(x == -1 for x in possible):
@@ -304,13 +367,20 @@ class King(Piece):
                 self.valid_moves[i] = 1
 
     def calc_attacking(self, board):
+        if self.side == -1:
+            mod_i = 7 - self.i
+            mod_j = 7 - self.j
+        else:
+            mod_i = self.i
+            mod_j = self.j
+
         self.attacking = [-1] * 8
         offset = 0
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if i != 0 and j != 0:
-                    if self.valid_position(self.i+i, self.j+j):
-                            self.attacking[(i+1) * 3 + (j+1) - offset] = (self.i+i) * 8 + (self.j+j) 
+                    if self.valid_position(mod_i+i, mod_j+j) and self.occupied(mod_i+i, mod_j+j, board) <= 0:
+                            self.attacking[(i+1) * 3 + (j+1) - offset] = (mod_i+i) * 8 + (mod_j+j) 
                 else:
                     offset = 1
             
