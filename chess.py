@@ -176,7 +176,7 @@ class Chess:
             print(chr(i), end='  ')
         print('')
         for i in range(8):
-            print(i+1, end=' ')
+            print(8-i, end=' ')
             for j in range(8):
                 if self.board0[8 * i + j] < 0:
                     print(' ' + str(self.board0[8 * i + j]), end='')
@@ -204,10 +204,57 @@ class Chess:
 
         return valid
 
+    def move_to_code(self, move):
+        # input move of shape B1HC3 -> [piece, i, j, move_index]
+
+        move = move.upper().strip()
+        move = [move[:2], move[2], move[3:]]
+
+        i = 7 - (int(move[0][1]) - 1)
+        j = ord(move[0][0]) - ord('A')
+
+        for piece in self.pieces:
+            if piece.i == i and piece.j == j:
+                if piece.show == move[1]:
+                    k = 7 - (int(move[2][1]) - 1)
+                    l = ord(move[2][0]) - ord('A') 
+                    if k * 8 + l in piece.attacking:
+                        move_index = piece.attacking.index(k * 8 + l)
+
+                        return piece.abs-1, i, j, move_index
+        return False
+
+    def code_to_move(self, piece, i, j, move_index):
+        move = ''
+        for p in self.pieces:
+            if p.i == i and p.j == j:
+                if p.abs-1 == piece:
+                    k = 7 - (p.attacking[move_index] // 8)
+                    l = p.attacking[move_index] % 8
+
+                    move += chr(ord('A') + j)
+                    move += str(8 - i)
+                    move += p.show
+                    move += chr(ord('A') + l)
+                    move += str(k+1)
+
+                    return move
+
+        return False
+
+
+
 chess = Chess()
 chess.initialization()
+for piece in chess.pieces:
+    print(piece.attacking)
 chess.position_print()
-print(chess.valid_moves())
+a = chess.move_to_code('d2pd3')
+# if a:
+#     print(chess.code_to_move(a[0], a[1], a[2], a[3]))
+# else:
+#     print(a)
+
 
 
     
