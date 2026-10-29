@@ -276,7 +276,8 @@ class Chess:
 
                     dependent = self.calc_dependencies(p.i, p.j)
                     dependent.extend(self.calc_dependencies(k, l))
-                    print(dependent)
+                    for d in dependent:
+                        print(d)
 
                     self.board0[p.i * 8 + p.j] = 0
                     self.board1[(7-p.i) * 8 + (7-p.j)] = 0
@@ -317,8 +318,8 @@ chess.position_print()
 while True:
     correct = chess.player_move(chess.player)
     if correct:
-        chess.position_print()
         chess.player *= -1
+        chess.position_print()
     else:
         print('enter valid move')
 

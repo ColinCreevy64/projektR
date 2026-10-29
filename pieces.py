@@ -4,6 +4,9 @@ class Piece:
         self.j = j
         self.side = side
 
+    def __str__(self):
+        return f"{self.show} at ({self.i}, {self.j})"
+
     def valid_position(self, i, j):
         if i >= 0 and i <= 7 and j >= 0 and j <= 7:
             return True
@@ -29,6 +32,8 @@ class Pawn(Piece):
         self.show = 'P'
 
     def valid_positions(self, board):
+        self.valid_moves = [0] * 4
+        
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -52,6 +57,8 @@ class Pawn(Piece):
                 self.valid_moves[3] = 1
 
     def calc_attacking(self):
+        self.attacking = ['x'] * 4
+
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -78,7 +85,9 @@ class Rook(Piece):
         self.abs = 2
         self.show = 'R'
 
-    def valid_positions_public(self, board, valid_moves):
+    def valid_positions_public(self, board):
+        valid_moves = [0] * 14
+        
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -143,9 +152,11 @@ class Rook(Piece):
         return valid_moves
 
     def valid_positions(self, board):
-        self.valid_positions_public(board, self.valid_moves)
+        self.valid_moves = self.valid_positions_public(board)
 
-    def calc_attacking_public(self, valid_moves, attacking):
+    def calc_attacking_public(self, valid_moves):
+        attacking = ['x'] * 14
+
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -153,6 +164,7 @@ class Rook(Piece):
             mod_i = self.i
             mod_j = self.j
 
+        offset = 0
         for i in range(8):
             # calculate vertical
             if i < mod_i:
@@ -162,21 +174,23 @@ class Rook(Piece):
                     attacking[i] = -1 * (i * 8 + mod_j)
             if i > mod_i:
                 if valid_moves[i-1+7] == 1:                 
-                    attacking[i-1+7] == i * 8 + mod_j
+                    attacking[i-1+7] = i * 8 + mod_j
                 elif valid_moves[i-1+7] == -1:
                     attacking[i-1+7] = -1 * (i * 8 + mod_j)
 
             # calculate horizontal
             if i != mod_i:
-                if valid_moves[i+mod_i] == 1:
-                    attacking[i+mod_i] == mod_i * 8 + i
-                elif valid_moves[i+mod_i] == -1:
-                    attacking[i+mod_i] = -1 * (mod_i * 8 + i)
+                if valid_moves[i+mod_i-offset] == 1:
+                    attacking[i+mod_i-offset] = mod_i * 8 + i
+                elif valid_moves[i+mod_i-offset] == -1:
+                    attacking[i+mod_i-offset] = -1 * (mod_i * 8 + i)
+            else:
+                offset = 1
 
         return attacking
 
     def calc_attacking(self):
-        self.calc_attacking_public(self.valid_moves, self.attacking)
+        self.attacking = self.calc_attacking_public(self.valid_moves)
 
 class Knight(Piece):
     def __init__(self, i, j, side):
@@ -187,6 +201,8 @@ class Knight(Piece):
         self.show = 'H'
 
     def valid_positions(self, board):
+        self.valid_moves = [0] * 8
+        
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -204,6 +220,8 @@ class Knight(Piece):
 
             
     def calc_attacking(self):
+        self.attacking = ['x'] * 8
+
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -227,7 +245,9 @@ class Bishop(Piece):
         self.abs = 4
         self.show = 'B'
 
-    def valid_positions_public(self, board, valid_moves):
+    def valid_positions_public(self, board):
+        valid_moves = [0] * 13
+        
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -290,9 +310,11 @@ class Bishop(Piece):
         return valid_moves
 
     def valid_positions(self, board):
-        self.valid_positions_public(board, self.valid_moves)
+        self.valid_moves = self.valid_positions_public(board)
 
-    def calc_attacking_public(self, valid_moves, attacking):
+    def calc_attacking_public(self, valid_moves):
+        attacking = ['x'] * 13
+
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -333,7 +355,7 @@ class Bishop(Piece):
         return attacking
 
     def calc_attacking(self):
-        self.calc_attacking_public(self.valid_moves, self.attacking)
+        self.attacking = self.calc_attacking_public(self.valid_moves)
 
 class Queen(Piece):
     def __init__(self, i, j, side):
@@ -344,16 +366,20 @@ class Queen(Piece):
         self.show = 'Q'
 
     def valid_positions(self, board):
+        self.valid_moves = [0] * 14 + [0] * 13
+        
         rook = Rook(self.i, self.j, self.side)
         bishop = Bishop(self.i, self.j, self.side)
-        self.valid_moves[:14] = rook.valid_positions_public(board, self.valid_moves[:14])
-        self.valid_moves[14:] = bishop.valid_positions_public(board, self.valid_moves[14:])
+        self.valid_moves[:14] = rook.valid_positions_public(board)
+        self.valid_moves[14:] = bishop.valid_positions_public(board)
 
     def calc_attacking(self):
+        self.attacking = ['x'] * 14 + ['x'] * 13
+
         rook = Rook(self.i, self.j, self.side)
         bishop = Bishop(self.i, self.j, self.side)
-        self.attacking[:14] = rook.calc_attacking_public(self.valid_moves[:14], self.attacking[:14])
-        self.attacking[14:] = bishop.calc_attacking_public(self.valid_moves[14:], self.attacking[14:])
+        self.attacking[:14] = rook.calc_attacking_public(self.valid_moves[:14])
+        self.attacking[14:] = bishop.calc_attacking_public(self.valid_moves[14:])
 
 class King(Piece):
     def __init__(self, i, j, side):
@@ -364,6 +390,8 @@ class King(Piece):
         self.show = 'K'
 
     def valid_positions(self, board, pieces):
+        self.valid_moves = [0] * 8
+        
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
@@ -397,6 +425,8 @@ class King(Piece):
                 self.valid_moves[i] = 1
 
     def calc_attacking(self, board):
+        self.attacking = ['x'] * 8
+
         if self.side == -1:
             mod_i = 7 - self.i
             mod_j = 7 - self.j
