@@ -246,15 +246,10 @@ class Chess:
 
         return False
 
-    def move(self, piece, i, j, move_index):
-        valid = self.valid_moves()
-        pawn = 0
-        if piece == 0:
-            pawn = 1
-    
-        if valid[piece][i][j][move_index] == 1:
-            for p in self.pieces:
-                if p.abs-1 == piece and p.i == i-pawn and p.j == j:
+    def move(self, piece, i, j, move_index, player_side):
+        for p in self.pieces:
+            if p.abs-1 == piece and p.i == i and p.j == j and p.side == player_side:
+                if p.valid_moves[move_index] == 1:
                     k = p.attacking[move_index] // 8
                     l = p.attacking[move_index] % 8
                     if p.side == -1:
@@ -294,16 +289,31 @@ class Chess:
                                 calc.valid_positions(self.board0)
                             calc.calc_attacking()
 
-            return True
+                return True
 
         return False
+
+    def player_move(self, player_side):
+        move = input('Enter valid move: ')
+        code = self.move_to_code(move)
+
+        if code:
+            return self.move(*code, player_side)
+
+        return False
+
 
 
 chess = Chess()
 chess.initialization()
 chess.position_print()
-# print(chess.move(0, 5, 0, 3))
-# chess.position_print()
+while True:
+    correct = chess.player_move(chess.player)
+    if correct:
+        chess.position_print()
+        chess.player *= -1
+    else:
+        print('enter valid move')
 
 
 
