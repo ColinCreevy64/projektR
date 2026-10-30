@@ -179,7 +179,7 @@ class Rook(Piece):
                     attacking[i-1+7] = -1 * (i * 8 + mod_j)
 
             # calculate horizontal
-            if i != mod_i:
+            if i != mod_j:
                 if valid_moves[i+mod_i-offset] == 1:
                     attacking[i+mod_i-offset] = mod_i * 8 + i
                 elif valid_moves[i+mod_i-offset] == -1:
