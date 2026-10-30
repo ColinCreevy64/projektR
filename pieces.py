@@ -13,6 +13,7 @@ class Piece:
         return False
 
     def occupied(self, i, j, board, side):
+
         if not self.valid_position(i, j):
             return 0
         
@@ -21,7 +22,7 @@ class Piece:
         elif board[8 * i + j] > 0:
             return 1
         else:
-            return 1
+            return -1
 
 class Pawn(Piece): 
     def __init__(self, i, j, side):
@@ -53,7 +54,7 @@ class Pawn(Piece):
 
         if mod_i == 6:
             self.valid_moves[3] = -1
-            if self.occupied(mod_i-2, mod_j, board, self.side) == 0:
+            if self.occupied(mod_i-1, mod_j, board, self.side) == 0 and self.occupied(mod_i-2, mod_j, board, self.side) == 0:
                 self.valid_moves[3] = 1
 
     def calc_attacking(self):
@@ -71,7 +72,7 @@ class Pawn(Piece):
             if self.valid_moves[i+1] == 1:
                 self.attacking[i+1] = position - 8 + i
             elif self.valid_moves[i+1] == -1:
-                self.attacking[i+1] = -1 * (position - 8 + 1)
+                self.attacking[i+1] = -1 * (position - 8 + i)
         if self.valid_moves[3] == 1:
             self.attacking[3] = position - 16
         elif self.valid_moves[3] == -1:
@@ -283,6 +284,7 @@ class Bishop(Piece):
         for i in range(increment):
             valid_moves[checked + i] = 1
         checked += min(mod_i, 7-mod_j)
+        increment = 0
         # check lower left
         occ = self.occupied(mod_i+(increment+1), mod_j-(increment+1), board, self.side)
         while self.valid_position(mod_i+(increment+1), mod_j-(increment+1)) and occ <= 0:
@@ -295,6 +297,7 @@ class Bishop(Piece):
         for i in range(increment):
             valid_moves[checked + i] = 1
         checked += min(7-mod_i, mod_j)
+        increment = 0
         # check lower right
         occ = self.occupied(mod_i+(increment+1), mod_j+(increment+1), board, self.side)
         while self.valid_position(mod_i+(increment+1), mod_j+(increment+1)) and occ <= 0:
@@ -413,9 +416,6 @@ class King(Piece):
                             possible[index] = -1 * ((mod_i+i) * 8 + (mod_j+j))
                 index += 1
 
-
-        print('possible ', possible)
-
         for piece in pieces:
             if piece.side == self.side or piece == self:
                 continue
@@ -425,7 +425,7 @@ class King(Piece):
                 for pos in piece.attacking:
                     if pos != 'x':
                         if (63-pos) in possible:
-                            possible[possible.index(pos)] = 'x'
+                            possible[possible.index(63-pos)] = 'x'
 
         for i in range(8):
             if possible[i] != 'x':

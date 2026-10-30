@@ -276,16 +276,13 @@ class Chess:
 
                     dependent = self.calc_dependencies(p.i, p.j)
                     dependent.extend(self.calc_dependencies(k, l))
-                    print(dependent)
-                    for d in dependent:
-                        print(d)
 
                     self.board0[p.i * 8 + p.j] = 0
                     self.board1[(7-p.i) * 8 + (7-p.j)] = 0
                     p.i = k
                     p.j = l
                     self.board0[p.i * 8 + p.j] = p.side * p.abs
-                    self.board1[(7-p.i) * 8 + (7-p.j)] = p.side * p.abs
+                    self.board1[(7-p.i) * 8 + (7-p.j)] = -1 * p.side * p.abs
 
                     for d in dependent:
                         if isinstance(d, P.King):
@@ -300,7 +297,7 @@ class Chess:
                     self.pieces[-1].valid_positions(self.board0, self.pieces)
                     self.pieces[-1].calc_attacking(self.board0)
 
-                return True
+                    return True
 
         return False
 
@@ -321,10 +318,7 @@ while True:
     if correct:
         chess.player *= -1
         for piece in chess.pieces:
-            if isinstance(piece, P.King):
-                print(piece.valid_moves)
-                print(piece.attacking)
-                
+            print(piece.valid_moves)
         chess.position_print()
     else:
         print('enter valid move')
