@@ -293,7 +293,11 @@ class Chess:
                             d.valid_positions(self.board1, self.check)
                         else:
                             d.valid_positions(self.board0, self.check)
-                        self.check_tmp.extend(d.calc_attacking(self.pieces))
+                        ext = d.calc_attacking(self.pieces)
+                        self.check_tmp.extend(ext)
+                        if ext:
+                            print('ext', d)
+                        
                     self.pieces[-2].valid_positions(self.board1, self.pieces)
                     self.pieces[-2].calc_attacking(self.board1)
                     self.pieces[-1].valid_positions(self.board0, self.pieces)
@@ -302,7 +306,16 @@ class Chess:
                     self.check = self.check_tmp.copy()
                     self.check_tmp = []
 
-                    print(self.check)
+
+                    for d in self.pieces:
+                        if isinstance(d, P.King):
+                            continue
+                        if d.side == -1:
+                            d.valid_positions(self.board1, self.check)
+                        else:
+                            d.valid_positions(self.board0, self.check)
+
+                    print('check', self.check)
 
                     return True
 

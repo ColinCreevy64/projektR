@@ -33,6 +33,7 @@ class Pawn(Piece):
         self.show = 'P'
 
     def valid_positions(self, board, check):
+        print(self, check)
         self.valid_moves = [0] * 4
         
         if self.side == -1:
@@ -64,16 +65,16 @@ class Pawn(Piece):
             for i in range(3):
                 if self.valid_position(mod_i-1, mod_j-1+i):
                     self.valid_moves[i] = -1
-            if self.valid_moves[0] and self.occupied(mod_i-1, mod_j-1, board, self.side) == -1 and ((mod_i-1) * 8 + (mod_j-1)) in check:
+            if self.valid_moves[0] and self.occupied(mod_i-1, mod_j-1, board, self.side) == -1 and ((self.i-(self.side * 1)) * 8 + (self.j-(self.side * 1))) in check:
                 self.valid_moves[0] = 1
-            if self.valid_moves[1] and self.occupied(mod_i-1, mod_j, board, self.side) == 0 and ((mod_i-1) * 8 + mod_j) in check:
+            if self.valid_moves[1] and self.occupied(mod_i-1, mod_j, board, self.side) == 0 and ((self.i-(self.side * 1)) * 8 + self.j) in check:
                 self.valid_moves[1] = 1
-            if self.valid_moves[2] and self.occupied(mod_i-1, mod_j+1, board, self.side) == -1 and ((mod_i-1) * 8 + (mod_j+1)) in check:
+            if self.valid_moves[2] and self.occupied(mod_i-1, mod_j+1, board, self.side) == -1 and ((self.i-(self.side * 1)) * 8 + (self.j+(self.side * 1))) in check:
                 self.valid_moves[2] = 1
 
             if mod_i == 6:
                 self.valid_moves[3] = -1
-                if self.occupied(mod_i-1, mod_j, board, self.side) == 0 and self.occupied(mod_i-2, mod_j, board, self.side) == 0 and ((mod_i-2) * 8 + mod_j) in check:
+                if self.occupied(mod_i-1, mod_j, board, self.side) == 0 and self.occupied(mod_i-2, mod_j, board, self.side) == 0 and ((self.i-(self.side * 2)) * 8 + self.j) in check:
                     self.valid_moves[3] = 1
 
     def calc_attacking(self, pieces):
@@ -102,7 +103,7 @@ class Pawn(Piece):
             if (pieces[-1].i * 8 + pieces[-1].j) in [self.attacking[0], self.attacking[2]]:
                 check.append(self.i * 8 + self.j)
         else:
-            if (pieces[-2].i * 8 + pieces[-2].j) in [self.attacking[0], self.attacking[2]]:
+            if ((pieces[-2].i) * 8 + (pieces[-2].j)) in [self.attacking[0], self.attacking[2]]:
                 check.append(self.i * 8 + self.j)    
 
         return check
@@ -191,7 +192,7 @@ class Rook(Piece):
             if self.valid_position(mod_i - (incrementX+1), mod_j):
                 valid_moves[mod_i-(incrementX+1)] = -1
             for i in range(mod_i-incrementX, mod_i):
-                if ((mod_i-i) * 8 + mod_j) in check:
+                if ((self.i-(self.side * i)) * 8 + self.j) in check:
                     valid_moves[checked + i] = 1
             checked += mod_i
             # check left
@@ -204,7 +205,7 @@ class Rook(Piece):
             if self.valid_position(mod_i, mod_j-(incrementY+1)):
                 valid_moves[checked + mod_j-(incrementY+1)] = -1
             for i in range(mod_j-incrementY, mod_j):
-                if (mod_i * 8 + (mod_j-i)) in check:
+                if (self.i * 8 + (self.j-(self.side * i))) in check:
                     valid_moves[checked + i] = 1
             checked += mod_j
             # check right
@@ -219,7 +220,7 @@ class Rook(Piece):
             if self.valid_position(mod_i, mod_j+(incrementY+1)):
                 valid_moves[checked + incrementY] = -1
             for i in range(incrementY):
-                if (mod_i * 8 + (mod_j + i)) in check:
+                if (self.i * 8 + (self.j+(self.side * i))) in check:
                     valid_moves[checked + i] = 1
             checked += 7 - mod_j
             # check below
@@ -232,7 +233,7 @@ class Rook(Piece):
             if self.valid_position(mod_i+(incrementX+1), mod_j):
                 valid_moves[checked + incrementX] = -1
             for i in range(incrementX):
-                if ((mod_i+i) * 8 + mod_j) in check:
+                if ((self.i+(self.side * i)) * 8 + self.j) in check:
                     valid_moves[checked + i] = 1        
 
         return valid_moves
@@ -247,8 +248,8 @@ class Rook(Piece):
             mod_i = 7 - self.i
             mod_j = 7 - self.j
 
-            king_i = pieces[-1].i
-            king_j = pieces[-1].j
+            king_i = 7 - pieces[-1].i
+            king_j = 7 - pieces[-1].j
         else:
             mod_i = self.i
             mod_j = self.j
@@ -260,19 +261,20 @@ class Rook(Piece):
         checkB = []
         checkR = []
         king_found = [False] * 4
+        check_king_found = [True] * 4
 
         for i in range(8):
             # calculate vertical
             if i == king_i and mod_j == king_j:
-                if i < mod_i:
+                if i < mod_i and check_king_found[0]:
                     king_found[0] = True
-                else:
+                elif check_king_found[3]:
                     king_found[3] = True
 
             if mod_i == king_i and i == king_j:
-                if i < mod_j:
+                if i < mod_j and check_king_found[1]:
                     king_found[1] = True
-                else:
+                elif check_king_found[2]:
                     king_found[2] = True
 
             if i < mod_i:
@@ -282,6 +284,8 @@ class Rook(Piece):
                         checkAL.append(i * 8 + mod_j)
                 elif valid_moves[i] == -1:
                     attacking[i] = -1 * (i * 8 + mod_j)
+                if valid_moves[i] != 1:
+                    check_king_found[0] = False
             if i > mod_i:
                 if valid_moves[i-1+7] == 1:                 
                     attacking[i-1+7] = i * 8 + mod_j
@@ -289,6 +293,8 @@ class Rook(Piece):
                         checkB.append(i * 8 + mod_j)
                 elif valid_moves[i-1+7] == -1:
                     attacking[i-1+7] = -1 * (i * 8 + mod_j)
+                if valid_moves[i-1+7] != 1:
+                    check_king_found[3] = False
 
             # calculate horizontal
             if i < mod_j:
@@ -298,6 +304,8 @@ class Rook(Piece):
                         checkAL.append(mod_i * 8 + i)
                 elif valid_moves[i+mod_i] == -1:
                     attacking[i+mod_i] = -1 * (mod_i * 8 + i)
+                if valid_moves[i+mod_i] != 1:
+                    check_king_found[1] = False
             if i > mod_j:
                 if valid_moves[i+mod_i-1] == 1:
                     attacking[i+mod_i-1] = mod_i * 8 + i
@@ -305,6 +313,8 @@ class Rook(Piece):
                         checkR.append(mod_i * 8 + i)
                 elif valid_moves[i+mod_i-1] == -1:
                     attacking[i+mod_i-1] = -1 * (mod_i * 8 + i)
+                if valid_moves[i+mod_i-1] != 1:
+                    check_king_found[2] = False
 
         if king_found[0] or king_found[1]:
             check = checkAL.copy()
@@ -341,6 +351,8 @@ class Knight(Piece):
             mod_j = self.j
 
         possible_moves = [[mod_i-2, mod_j-1], [mod_i-2, mod_j+1], [mod_i-1, mod_j-2], [mod_i-1, mod_j+2], [mod_i+1, mod_j-2], [mod_i+1, mod_j+2], [mod_i+2, mod_j-1], [mod_i+2, mod_j+1]]
+        possible_moves_white = [[self.i-(self.side * 2), self.j-(self.side * 1)], [self.i-(self.side * 2), self.j+(self.side * 1)], [self.i-(self.side * 1), self.j-(self.side * 2)], [self.i-(self.side * 1), self.j+(self.side * 2)], [self.i+(self.side * 1), self.j-(self.side * 2)], [self.i+(self.side * 1), self.j+(self.side * 2)], [self.i+(self.side * 2), self.j-(self.side * 1)], [self.i+(self.side * 2), self.j+(self.side * 1)]]
+
 
         if not check:
             for i in range(8):
@@ -353,7 +365,7 @@ class Knight(Piece):
             for i in range(8):
                 if self.valid_position(possible_moves[i][0], possible_moves[i][1]):
                     self.valid_moves[i] = -1
-                    if self.occupied(possible_moves[i][0], possible_moves[i][1], board, self.side) <= 0 and (possible_moves[i][0] * 8 + possible_moves[i][1]) in check:
+                    if self.occupied(possible_moves[i][0], possible_moves[i][1], board, self.side) <= 0 and (possible_moves_white[i][0] * 8 + possible_moves_white[i][1]) in check:
                         self.valid_moves[i] = 1
 
             
@@ -364,8 +376,8 @@ class Knight(Piece):
             mod_i = 7 - self.i
             mod_j = 7 - self.j
 
-            king_i = pieces[-1].i
-            king_j = pieces[-1].j
+            king_i = 7 - pieces[-1].i
+            king_j = 7 - pieces[-1].j
         else:
             mod_i = self.i
             mod_j = self.j
@@ -470,7 +482,7 @@ class Bishop(Piece):
             if self.valid_position(mod_i-(increment+1), mod_j-(increment+1)):
                 valid_moves[increment] = -1
             for i in range(increment):
-                if (mod_i-(increment+1), mod_j-(increment+1)) in check:
+                if ((self.i-(self.side * (increment+1))) * 8 + (self.j-(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
             checked += min(mod_i, mod_j)
             increment = 0
@@ -484,7 +496,7 @@ class Bishop(Piece):
             if self.valid_position(mod_i-(increment+1), mod_j+(increment+1)):
                 valid_moves[checked + increment] = -1
             for i in range(increment):
-                if (mod_i-(increment+1), mod_j+(increment+1)) in check:
+                if ((self.i-(self.side * (increment+1))) * 8 + (self.j+(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
             checked += min(mod_i, 7-mod_j)
             increment = 0
@@ -498,7 +510,7 @@ class Bishop(Piece):
             if self.valid_position(mod_i+(increment+1), mod_j-(increment+1)):
                 valid_moves[checked + increment] = -1
             for i in range(increment):
-                if (mod_i+(increment+1), mod_j-(increment+1)) in check:
+                if ((self.i+(self.side * (increment+1))) * 8 + (self.j-(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
             checked += min(7-mod_i, mod_j)
             increment = 0
@@ -512,7 +524,7 @@ class Bishop(Piece):
             if self.valid_position(mod_i+(increment+1), mod_j+(increment+1)):
                 valid_moves[checked + increment] = -1
             for i in range(increment):
-                if (mod_i+(increment+1), mod_j+(increment+1)) in check:
+                if ((self.i+(self.side * (increment+1))) * 8 + (self.j+(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
 
         return valid_moves
@@ -527,8 +539,8 @@ class Bishop(Piece):
             mod_i = 7 - self.i
             mod_j = 7 - self.j
 
-            king_i = pieces[-1].i
-            king_j = pieces[-1].j
+            king_i = 7 - pieces[-1].i
+            king_j = 7 - pieces[-1].j
         else:
             mod_i = self.i
             mod_j = self.j
@@ -540,6 +552,7 @@ class Bishop(Piece):
         checkUR = []
         checkBL = []
         checkBR = []
+        check_king_found = [True] * 4
         king_found = [False] * 4
 
         ul = min(mod_i, mod_j)
@@ -548,15 +561,15 @@ class Bishop(Piece):
         br = min(7-mod_i, 7-mod_j)
 
         for i in range(7):
-            if mod_i-i == king_i:
-                if mod_j-i == king_j:
+            if mod_i-i-1 == king_i:
+                if mod_j-i-1 == king_j and check_king_found[0]:
                     king_found[0] = True
-                elif mod_j+i == king_j:
+                elif mod_j+i+1 == king_j and check_king_found[1]:
                     king_found[1] = True
-            elif mod_i+i == king_i:
-                if mod_j-i == king_j:
+            elif mod_i+i+1 == king_i:
+                if mod_j-i-1 == king_j and check_king_found[2]:
                     king_found[2] = True
-                elif mod_j+i == king_j:
+                elif mod_j+i+1 == king_j and check_king_found[3]:
                     king_found[3] = True
 
             # calculate upper left
@@ -567,33 +580,41 @@ class Bishop(Piece):
                         checkUL.append((mod_i-i-1) * 8 + (mod_j-i-1))
                 elif valid_moves[i] == -1:
                     attacking[i] = -1 * ((mod_i-i-1) * 8 + (mod_j-i-1))
+                if valid_moves[i] != 1:
+                    check_king_found[0] = False
             # calculate upper right
             if i < ur:
                 if valid_moves[i+ul] == 1:
                     attacking[i+ul] = (mod_i-i-1) * 8 + (mod_j+i+1)
                     if not king_found[1]:
-                        checkUR.append((mod_i-i-1) * 8 + (mod_j-i+1))
+                        checkUR.append((mod_i-i-1) * 8 + (mod_j+i+1))
                 elif valid_moves[i+ul] == -1:
                     attacking[i+ul] = -1 * ((mod_i-i-1) * 8 + (mod_j+i+1))
+                if valid_moves[i+ul] != 1:
+                    check_king_found[1] = False
             # calculate bottom left
             if i < bl:
                 if valid_moves[i+ul+ur] == 1:
                     attacking[i+ul+ur] = (mod_i+i+1) * 8 + (mod_j-i-1)
                     if not king_found[2]:
-                        checkBL.append((mod_i-i+1) * 8 + (mod_j-i-1))
+                        checkBL.append((mod_i+i+1) * 8 + (mod_j-i-1))
                 elif valid_moves[i+ul+ur] == -1:
                     attacking[i+ul+ur] = -1 * ((mod_i+i+1) * 8 + (mod_j-i-1))
+                if valid_moves[i+ul+ur] != 1:
+                    check_king_found[2] = False
             # calculate bottom right
             if i < br:
                 if valid_moves[i+ul+ur+bl] == 1:
                     attacking[i+ul+ur+bl] = (mod_i+i+1) * 8 + (mod_j+i+1)
                     if not king_found[3]:
-                        checkBR.append((mod_i-i+1) * 8 + (mod_j-i+1))
+                        checkBR.append((mod_i+i+1) * 8 + (mod_j+i+1))
                 elif valid_moves[i+ul+ur+bl] == -1:
                     attacking[i+ul+ur+bl] = -1 * ((mod_i+i+1) * 8 + (mod_j+i+1))
+                if valid_moves[i+ul+ur+bl] != 1:
+                    check_king_found[3] = False
 
         if king_found[0]:
-            check = checkUR.copy()
+            check = checkUL.copy()
         elif king_found[1]:
             check = checkUR.copy()
         elif king_found[2]:
@@ -604,6 +625,7 @@ class Bishop(Piece):
             check = []
         if True in king_found:
             check.append(mod_i * 8 + mod_j)
+            print(king_found)
 
         return attacking, check
 
@@ -637,6 +659,8 @@ class Queen(Piece):
         self.attacking[14:], checkB = bishop.calc_attacking_public(self.valid_moves[14:], pieces)
 
         check = checkR.copy()
+        print(checkR)
+        print(checkB)
         check.extend(checkB)
         return check
 
