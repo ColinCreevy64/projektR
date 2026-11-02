@@ -33,6 +33,8 @@ class Chess:
         self.board1 = [0] * 64   # board for white point of view and board for black point of view
         self.player = 1
         self.pieces = []
+        self.check = []
+        self.check_tmp = []
         self.moves = [
             # pawn
             [
@@ -165,10 +167,10 @@ class Chess:
 
             else:
                 if piece.side == -1:
-                    piece.valid_positions(self.board1)
+                    piece.valid_positions(self.board1, self.check)
                 else:
-                    piece.valid_positions(self.board0)
-                piece.calc_attacking()
+                    piece.valid_positions(self.board0, self.check)
+                piece.calc_attacking(self.pieces)
 
     def position_print(self):
         print('    ', end='')
@@ -288,14 +290,19 @@ class Chess:
                         if isinstance(d, P.King):
                             continue
                         if d.side == -1:
-                            d.valid_positions(self.board1)  
+                            d.valid_positions(self.board1, self.check)
                         else:
-                            d.valid_positions(self.board0)
-                        d.calc_attacking()
+                            d.valid_positions(self.board0, self.check)
+                        self.check_tmp.extend(d.calc_attacking(self.pieces))
                     self.pieces[-2].valid_positions(self.board1, self.pieces)
                     self.pieces[-2].calc_attacking(self.board1)
                     self.pieces[-1].valid_positions(self.board0, self.pieces)
                     self.pieces[-1].calc_attacking(self.board0)
+
+                    self.check = self.check_tmp.copy()
+                    self.check_tmp = []
+
+                    print(self.check)
 
                     return True
 
@@ -317,8 +324,6 @@ while True:
     correct = chess.player_move(chess.player)
     if correct:
         chess.player *= -1
-        for piece in chess.pieces:
-            print(piece.valid_moves)
         chess.position_print()
     else:
         print('enter valid move')
