@@ -130,25 +130,27 @@ class Rook(Piece):
         if not check:
             # check above
             occ = self.occupied(mod_i-(incrementX+1), mod_j, board, self.side)
-            while self.valid_position(mod_i-(incrementX+1), mod_j) and occ <= 0:
+            while self.valid_position(mod_i-(incrementX+1), mod_j) and occ == 0:
                 incrementX += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i-(incrementX+1), mod_j, board, self.side)
             if self.valid_position(mod_i - (incrementX+1), mod_j):
-                valid_moves[mod_i-(incrementX+1)] = -1
+                if occ == -1:
+                    valid_moves[mod_i-(incrementX+1)] = 1
+                else:
+                    valid_moves[mod_i-(incrementX+1)] = -1                    
             for i in range(mod_i-incrementX, mod_i):
                 valid_moves[checked + i] = 1
             checked += mod_i
             # check left
             occ = self.occupied(mod_i, mod_j-(incrementY+1), board, self.side)
-            while self.valid_position(mod_i, mod_j-(incrementY+1)) and occ <= 0:
+            while self.valid_position(mod_i, mod_j-(incrementY+1)) and occ == 0:
                 incrementY += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i, mod_j-(incrementY+1), board, self.side)
             if self.valid_position(mod_i, mod_j-(incrementY+1)):
-                valid_moves[checked + mod_j-(incrementY+1)] = -1
+                if occ == -1:
+                    valid_moves[checked + mod_j-(incrementY+1)] = 1
+                else:
+                    valid_moves[checked + mod_j-(incrementY+1)] = -1
             for i in range(mod_j-incrementY, mod_j):
                 valid_moves[checked + i] = 1
             checked += mod_j
@@ -156,51 +158,55 @@ class Rook(Piece):
             incrementX = 0
             incrementY = 0
             occ = self.occupied(mod_i, mod_j+(incrementY+1), board, self.side)
-            while self.valid_position(mod_i, mod_j+(incrementY+1)) and occ <= 0:
+            while self.valid_position(mod_i, mod_j+(incrementY+1)) and occ == 0:
                 incrementY += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i, mod_j+(incrementY+1), board, self.side)
             if self.valid_position(mod_i, mod_j+(incrementY+1)):
-                valid_moves[checked + incrementY] = -1
+                if occ == -1:
+                    valid_moves[checked + incrementY] = 1
+                else:
+                    valid_moves[checked + incrementY] = -1
             for i in range(incrementY):
                 valid_moves[checked + i] = 1
             checked += 7 - mod_j
             # check below
             occ = self.occupied(mod_i+(incrementX+1), mod_j, board, self.side)
-            while self.valid_position(mod_i+(incrementX+1), mod_j) and occ <= 0:
+            while self.valid_position(mod_i+(incrementX+1), mod_j) and occ == 0:
                 incrementX += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i+(incrementX+1), mod_j, board, self.side)
             if self.valid_position(mod_i+(incrementX+1), mod_j):
-                valid_moves[checked + incrementX] = -1
+                if occ == -1:
+                    valid_moves[checked + incrementX] = 1
+                else:
+                    valid_moves[checked + incrementX] = -1
             for i in range(incrementX):
                 valid_moves[checked + i] = 1
 
         else:
             # check above
             occ = self.occupied(mod_i-(incrementX+1), mod_j, board, self.side)
-            while self.valid_position(mod_i-(incrementX+1), mod_j) and occ <= 0:
+            while self.valid_position(mod_i-(incrementX+1), mod_j) and occ == 0:
                 incrementX += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i-(incrementX+1), mod_j, board, self.side)
             if self.valid_position(mod_i - (incrementX+1), mod_j):
-                valid_moves[mod_i-(incrementX+1)] = -1
+                if occ == -1:
+                    valid_moves[mod_i-(incrementX+1)] = 1
+                else:
+                    valid_moves[mod_i-(incrementX+1)] = -1
             for i in range(mod_i-incrementX, mod_i):
                 if ((self.i-(self.side * i)) * 8 + self.j) in check:
                     valid_moves[checked + i] = 1
             checked += mod_i
             # check left
             occ = self.occupied(mod_i, mod_j-(incrementY+1), board, self.side)
-            while self.valid_position(mod_i, mod_j-(incrementY+1)) and occ <= 0:
+            while self.valid_position(mod_i, mod_j-(incrementY+1)) and occ == 0:
                 incrementY += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i, mod_j-(incrementY+1), board, self.side)
             if self.valid_position(mod_i, mod_j-(incrementY+1)):
-                valid_moves[checked + mod_j-(incrementY+1)] = -1
+                if occ == -1:
+                    valid_moves[checked + mod_j-(incrementY+1)] = 1
+                else:
+                    valid_moves[checked + mod_j-(incrementY+1)] = -1
             for i in range(mod_j-incrementY, mod_j):
                 if (self.i * 8 + (self.j-(self.side * i))) in check:
                     valid_moves[checked + i] = 1
@@ -209,26 +215,28 @@ class Rook(Piece):
             incrementX = 0
             incrementY = 0
             occ = self.occupied(mod_i, mod_j+(incrementY+1), board, self.side)
-            while self.valid_position(mod_i, mod_j+(incrementY+1)) and occ <= 0:
+            while self.valid_position(mod_i, mod_j+(incrementY+1)) and occ == 0:
                 incrementY += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i, mod_j+(incrementY+1), board, self.side)
             if self.valid_position(mod_i, mod_j+(incrementY+1)):
-                valid_moves[checked + incrementY] = -1
+                if occ == -1:
+                    valid_moves[checked + incrementY] = 1
+                else:
+                    valid_moves[checked + incrementY] = -1
             for i in range(incrementY):
                 if (self.i * 8 + (self.j+(self.side * i))) in check:
                     valid_moves[checked + i] = 1
             checked += 7 - mod_j
             # check below
             occ = self.occupied(mod_i+(incrementX+1), mod_j, board, self.side)
-            while self.valid_position(mod_i+(incrementX+1), mod_j) and occ <= 0:
+            while self.valid_position(mod_i+(incrementX+1), mod_j) and occ == 0:
                 incrementX += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i+(incrementX+1), mod_j, board, self.side)
             if self.valid_position(mod_i+(incrementX+1), mod_j):
-                valid_moves[checked + incrementX] = -1
+                if occ == -1:
+                    valid_moves[checked + incrementX] = 1
+                else:
+                    valid_moves[checked + incrementX] = -1
             for i in range(incrementX):
                 if ((self.i+(self.side * i)) * 8 + self.j) in check:
                     valid_moves[checked + i] = 1        
@@ -419,65 +427,70 @@ class Bishop(Piece):
         if not check:
             # check upper left
             occ = self.occupied(mod_i-(increment+1), mod_j-(increment+1), board, self.side)
-            while self.valid_position(mod_i-(increment+1), mod_j-(increment+1)) and occ <= 0:
+            while self.valid_position(mod_i-(increment+1), mod_j-(increment+1)) and occ == 0:
                 increment += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i-(increment+1), mod_j-(increment+1), board, self.side)
             if self.valid_position(mod_i-(increment+1), mod_j-(increment+1)):
-                valid_moves[increment] = -1
+                if occ == -1:
+                    valid_moves[increment] = 1
+                else:
+                    valid_moves[increment] = -1
             for i in range(increment):
                 valid_moves[checked + i] = 1
             checked += min(mod_i, mod_j)
             increment = 0
             # check upper right
             occ = self.occupied(mod_i-(increment+1), mod_j+(increment+1), board, self.side)
-            while self.valid_position(mod_i-(increment+1), mod_j+(increment+1)) and occ <= 0:
+            while self.valid_position(mod_i-(increment+1), mod_j+(increment+1)) and occ == 0:
                 increment += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i-(increment+1), mod_j+(increment+1), board, self.side)
             if self.valid_position(mod_i-(increment+1), mod_j+(increment+1)):
-                valid_moves[checked + increment] = -1
+                if occ == -1:
+                    valid_moves[checked + increment] = 1
+                else:
+                    valid_moves[checked + increment] = -1
             for i in range(increment):
                 valid_moves[checked + i] = 1
             checked += min(mod_i, 7-mod_j)
             increment = 0
             # check lower left
             occ = self.occupied(mod_i+(increment+1), mod_j-(increment+1), board, self.side)
-            while self.valid_position(mod_i+(increment+1), mod_j-(increment+1)) and occ <= 0:
+            while self.valid_position(mod_i+(increment+1), mod_j-(increment+1)) and occ == 0:
                 increment += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i+(increment+1), mod_j-(increment+1), board, self.side)
             if self.valid_position(mod_i+(increment+1), mod_j-(increment+1)):
-                valid_moves[checked + increment] = -1
+                if occ == -1:
+                    valid_moves[checked + increment] = 1
+                else:
+                    valid_moves[checked + increment] = -1 
             for i in range(increment):
                 valid_moves[checked + i] = 1
             checked += min(7-mod_i, mod_j)
             increment = 0
             # check lower right
             occ = self.occupied(mod_i+(increment+1), mod_j+(increment+1), board, self.side)
-            while self.valid_position(mod_i+(increment+1), mod_j+(increment+1)) and occ <= 0:
+            while self.valid_position(mod_i+(increment+1), mod_j+(increment+1)) and occ == 0:
                 increment += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i+(increment+1), mod_j+(increment+1), board, self.side)
             if self.valid_position(mod_i+(increment+1), mod_j+(increment+1)):
-                valid_moves[checked + increment] = -1
+                if occ == -1:
+                    valid_moves[checked + increment] = 1
+                else:
+                    valid_moves[checked + increment] = -1
             for i in range(increment):
                 valid_moves[checked + i] = 1
 
         else:
             # check upper left
             occ = self.occupied(mod_i-(increment+1), mod_j-(increment+1), board, self.side)
-            while self.valid_position(mod_i-(increment+1), mod_j-(increment+1)) and occ <= 0:
+            while self.valid_position(mod_i-(increment+1), mod_j-(increment+1)) and occ == 0:
                 increment += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i-(increment+1), mod_j-(increment+1), board, self.side)
             if self.valid_position(mod_i-(increment+1), mod_j-(increment+1)):
-                valid_moves[increment] = -1
+                if occ == -1:
+                    valid_moves[increment] = 1
+                else:
+                    valid_moves[increment] = -1
             for i in range(increment):
                 if ((self.i-(self.side * (increment+1))) * 8 + (self.j-(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
@@ -485,13 +498,14 @@ class Bishop(Piece):
             increment = 0
             # check upper right
             occ = self.occupied(mod_i-(increment+1), mod_j+(increment+1), board, self.side)
-            while self.valid_position(mod_i-(increment+1), mod_j+(increment+1)) and occ <= 0:
+            while self.valid_position(mod_i-(increment+1), mod_j+(increment+1)) and occ == 0:
                 increment += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i-(increment+1), mod_j+(increment+1), board, self.side)
             if self.valid_position(mod_i-(increment+1), mod_j+(increment+1)):
-                valid_moves[checked + increment] = -1
+                if occ == -1:
+                    valid_moves[checked + increment] = 1
+                else:
+                    valid_moves[checked + increment] = -1
             for i in range(increment):
                 if ((self.i-(self.side * (increment+1))) * 8 + (self.j+(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
@@ -499,13 +513,14 @@ class Bishop(Piece):
             increment = 0
             # check lower left
             occ = self.occupied(mod_i+(increment+1), mod_j-(increment+1), board, self.side)
-            while self.valid_position(mod_i+(increment+1), mod_j-(increment+1)) and occ <= 0:
+            while self.valid_position(mod_i+(increment+1), mod_j-(increment+1)) and occ == 0:
                 increment += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i+(increment+1), mod_j-(increment+1), board, self.side)
             if self.valid_position(mod_i+(increment+1), mod_j-(increment+1)):
-                valid_moves[checked + increment] = -1
+                if occ == -1:
+                    valid_moves[checked + increment] = 1
+                else:
+                    valid_moves[checked + increment] = -1
             for i in range(increment):
                 if ((self.i+(self.side * (increment+1))) * 8 + (self.j-(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
@@ -513,13 +528,14 @@ class Bishop(Piece):
             increment = 0
             # check lower right
             occ = self.occupied(mod_i+(increment+1), mod_j+(increment+1), board, self.side)
-            while self.valid_position(mod_i+(increment+1), mod_j+(increment+1)) and occ <= 0:
+            while self.valid_position(mod_i+(increment+1), mod_j+(increment+1)) and occ == 0:
                 increment += 1
-                if occ == -1:
-                    break
                 occ = self.occupied(mod_i+(increment+1), mod_j+(increment+1), board, self.side)
             if self.valid_position(mod_i+(increment+1), mod_j+(increment+1)):
-                valid_moves[checked + increment] = -1
+                if occ == -1:
+                    valid_moves[checked + increment] = 1
+                else:
+                    valid_moves[checked + increment] = -1
             for i in range(increment):
                 if ((self.i+(self.side * (increment+1))) * 8 + (self.j+(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1

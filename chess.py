@@ -221,6 +221,7 @@ class Chess:
                         k = 7 - k
                         l = 7 - l
 
+                    print('a')
                     if k * 8 + l in piece.attacking:
                         move_index = piece.attacking.index(k * 8 + l)
 
@@ -306,6 +307,7 @@ class Chess:
                             d.valid_positions(self.board1, self.check)
                         else:
                             d.valid_positions(self.board0, self.check)
+                        self.check_tmp.extend(d.calc_attacking(self.pieces))
                         
                     self.pieces[-2].valid_positions(self.board1, self.pieces)
                     self.pieces[-2].calc_attacking(self.board1)
@@ -324,6 +326,8 @@ class Chess:
                         else:
                             d.valid_positions(self.board0, self.check)
                         d.calc_attacking(self.pieces)
+
+                    print(self.check)
 
                     win = self.win(self.pieces, player_side, self.check)
                     if win == 1:
@@ -356,7 +360,7 @@ while True:
     elif correct == -1:
         print('black win')
         break
-    elif correct == 0:
+    elif correct == 0 and correct is not False:
         print('draw')
         break
     elif correct == 2:
