@@ -261,6 +261,19 @@ class Chess:
 
         return dependent
 
+    def win(self, pieces, side, check):
+        # win -> 1, draw -> 0, continue -> -1
+
+        for piece in pieces:
+            if piece.side != side:
+                if 1 in piece.valid_moves:
+                    return -1
+
+        if check:
+            return 1
+        else:
+            return 0
+
     def move(self, piece, i, j, move_index, player_side):
         for p in self.pieces:
             if p.abs-1 == piece and p.i == i and p.j == j and p.side == player_side:
@@ -312,11 +325,15 @@ class Chess:
                             d.valid_positions(self.board0, self.check)
                         d.calc_attacking(self.pieces)
 
-                    print('check', self.check)
+                    win = self.win(self.pieces, player_side, self.check)
+                    if win == 1:
+                        return player_side
+                    elif win == 0:
+                        return 0
 
-                    return True
+                    return 2
 
-        return False
+        return -2
 
     def player_move(self, player_side):
         move = input('Enter valid move: ')
@@ -332,7 +349,17 @@ chess.initialization()
 chess.position_print()
 while True:
     correct = chess.player_move(chess.player)
-    if correct:
+    print(correct)
+    if correct == 1:
+        print('white win')
+        break
+    elif correct == -1:
+        print('black win')
+        break
+    elif correct == 0:
+        print('draw')
+        break
+    elif correct == 2:
         chess.player *= -1
         chess.position_print()
     else:

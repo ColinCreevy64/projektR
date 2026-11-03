@@ -33,7 +33,6 @@ class Pawn(Piece):
         self.show = 'P'
 
     def valid_positions(self, board, check):
-        print(self, check)
         self.valid_moves = [0] * 4
         
         if self.side == -1:
@@ -44,7 +43,6 @@ class Pawn(Piece):
             mod_j = self.j
 
         if not check:
-            print('a')
             for i in range(3):
                 if self.valid_position(mod_i-1, mod_j-1+i):
                     self.valid_moves[i] = -1
@@ -61,7 +59,6 @@ class Pawn(Piece):
                     self.valid_moves[3] = 1
 
         else:
-            print(check)
             for i in range(3):
                 if self.valid_position(mod_i-1, mod_j-1+i):
                     self.valid_moves[i] = -1
@@ -625,7 +622,6 @@ class Bishop(Piece):
             check = []
         if True in king_found:
             check.append(mod_i * 8 + mod_j)
-            print(king_found)
 
         return attacking, check
 
@@ -659,8 +655,6 @@ class Queen(Piece):
         self.attacking[14:], checkB = bishop.calc_attacking_public(self.valid_moves[14:], pieces)
 
         check = checkR.copy()
-        print(checkR)
-        print(checkB)
         check.extend(checkB)
         return check
 
