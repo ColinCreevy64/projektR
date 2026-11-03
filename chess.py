@@ -293,10 +293,6 @@ class Chess:
                             d.valid_positions(self.board1, self.check)
                         else:
                             d.valid_positions(self.board0, self.check)
-                        ext = d.calc_attacking(self.pieces)
-                        self.check_tmp.extend(ext)
-                        if ext:
-                            print('ext', d)
                         
                     self.pieces[-2].valid_positions(self.board1, self.pieces)
                     self.pieces[-2].calc_attacking(self.board1)
@@ -314,6 +310,7 @@ class Chess:
                             d.valid_positions(self.board1, self.check)
                         else:
                             d.valid_positions(self.board0, self.check)
+                        d.calc_attacking(self.pieces)
 
                     print('check', self.check)
 
