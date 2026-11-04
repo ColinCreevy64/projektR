@@ -221,7 +221,6 @@ class Chess:
                         k = 7 - k
                         l = 7 - l
 
-                    print('a')
                     if k * 8 + l in piece.attacking:
                         move_index = piece.attacking.index(k * 8 + l)
 
@@ -265,14 +264,20 @@ class Chess:
     def win(self, pieces, side, check):
         # win -> 1, draw -> 0, continue -> -1
 
-        for piece in pieces:
-            if piece.side != side:
-                if 1 in piece.valid_moves:
-                    return -1
-
         if check:
-            return 1
+            if side == -1:
+                if 1 not in pieces[-1].valid_moves:
+                    return 1
+                return -1
+            else:
+                if 1 not in pieces[-2].valid_moves:
+                    return 1
+                return -1
         else:
+            for piece in pieces:
+                if piece.side != side:
+                    if 1 in piece.valid_moves:
+                        return -1
             return 0
 
     def move(self, piece, i, j, move_index, player_side):
@@ -327,8 +332,6 @@ class Chess:
                             d.valid_positions(self.board0, self.check)
                         d.calc_attacking(self.pieces)
 
-                    print(self.check)
-
                     win = self.win(self.pieces, player_side, self.check)
                     if win == 1:
                         return player_side
@@ -353,7 +356,6 @@ chess.initialization()
 chess.position_print()
 while True:
     correct = chess.player_move(chess.player)
-    print(correct)
     if correct == 1:
         print('white win')
         break

@@ -701,21 +701,23 @@ class King(Piece):
 
                 if self.valid_position(mod_i+i, mod_j+j):
                         if self.occupied(mod_i+i, mod_j+j, board, self.side) <= 0:
-                            possible[index] = (mod_i+i) * 8 + (mod_j+j)
+                            possible[index] = (self.i+(self.side*i)) * 8 + (self.j+(self.side*j))
                         elif self.occupied(mod_i+i, mod_j+j, board, self.side) > 0:
-                            possible[index] = -1 * ((mod_i+i) * 8 + (mod_j+j))
+                            possible[index] = -1 * ((self.i+(self.side*i)) * 8 + (self.j+(self.side*j)))
                 index += 1
 
         for piece in pieces:
-            if piece.side == self.side or piece == self:
+            if piece.side == self.side:
                 continue
             else:
                 if all(x == 'x' for x in possible):
                     break
                 for pos in piece.attacking:
                     if pos != 'x':
-                        if (63-pos) in possible:
-                            possible[possible.index(63-pos)] = 'x'
+                        if pos in possible:
+                            possible[possible.index(pos)] = 'x'
+                        elif (-1 * pos) in possible:
+                            possible[possible.index(-1 * pos)] = 'x'
 
         for i in range(8):
             if possible[i] != 'x':
