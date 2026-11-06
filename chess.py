@@ -138,23 +138,23 @@ class Chess:
         queen = P.Queen(0, 3, -1)
         self.pieces.append(queen)
         self.board0[3] = queen.side * queen.abs
-        self.board1[59] = -1 * queen.side * queen.abs
+        self.board1[60] = -1 * queen.side * queen.abs
 
         queen = P.Queen(7, 3, 1)
         self.pieces.append(queen)
         self.board0[59] = queen.side * queen.abs
-        self.board1[3] = -1 * queen.side * queen.abs
+        self.board1[4] = -1 * queen.side * queen.abs
 
         # kralj
         king = P.King(0, 4, -1)
         self.pieces.append(king)
         self.board0[4] = king.side * king.abs
-        self.board1[60] = -1 * king.side * king.abs
+        self.board1[59] = -1 * king.side * king.abs
 
         king = P.King(7, 4, 1)
         self.pieces.append(king)
         self.board0[60] = king.side * king.abs
-        self.board1[4] = -1 * king.side * king.abs
+        self.board1[3] = -1 * king.side * king.abs
 
         for piece in self.pieces:
             if isinstance(piece, P.King):
@@ -167,9 +167,9 @@ class Chess:
 
             else:
                 if piece.side == -1:
-                    piece.valid_positions(self.board1, self.check)
+                    piece.valid_positions(self.board1, self.check, self.pieces[-1])
                 else:
-                    piece.valid_positions(self.board0, self.check)
+                    piece.valid_positions(self.board0, self.check, self.pieces[-2])
                 piece.calc_attacking(self.pieces)
 
     def position_print(self):
@@ -309,9 +309,9 @@ class Chess:
                         if isinstance(d, P.King):
                             continue
                         if d.side == -1:
-                            d.valid_positions(self.board1, self.check)
+                            d.valid_positions(self.board1, self.check, self.pieces[-1])
                         else:
-                            d.valid_positions(self.board0, self.check)
+                            d.valid_positions(self.board0, self.check, self.pieces[-2])
                         self.check_tmp.extend(d.calc_attacking(self.pieces))
                         
                     self.pieces[-2].valid_positions(self.board1, self.pieces)
@@ -327,9 +327,9 @@ class Chess:
                         if isinstance(d, P.King):
                             continue
                         if d.side == -1:
-                            d.valid_positions(self.board1, self.check)
+                            d.valid_positions(self.board1, self.check, self.pieces[-1])
                         else:
-                            d.valid_positions(self.board0, self.check)
+                            d.valid_positions(self.board0, self.check, self.pieces[-2])
                         d.calc_attacking(self.pieces)
 
                     win = self.win(self.pieces, player_side, self.check)
