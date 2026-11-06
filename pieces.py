@@ -137,7 +137,9 @@ class Rook(Piece):
                 if occ == -1:
                     valid_moves[mod_i-(incrementX+1)] = 1
                 else:
-                    valid_moves[mod_i-(incrementX+1)] = -1                    
+                    valid_moves[mod_i-(incrementX+1)] = -1
+            if self.valid_position(mod_i - (incrementX+2), mod_j):
+                valid_moves[mod_i-(incrementX+2)] = -1                        
             for i in range(mod_i-incrementX, mod_i):
                 valid_moves[checked + i] = 1
             checked += mod_i
@@ -151,6 +153,8 @@ class Rook(Piece):
                     valid_moves[checked + mod_j-(incrementY+1)] = 1
                 else:
                     valid_moves[checked + mod_j-(incrementY+1)] = -1
+            if self.valid_position(mod_i, mod_j-(incrementY+2)):
+                valid_moves[checked + mod_j-(incrementY+2)] = -1         
             for i in range(mod_j-incrementY, mod_j):
                 valid_moves[checked + i] = 1
             checked += mod_j
@@ -166,6 +170,8 @@ class Rook(Piece):
                     valid_moves[checked + incrementY] = 1
                 else:
                     valid_moves[checked + incrementY] = -1
+            if self.valid_position(mod_i, mod_j+(incrementY+2)):
+                valid_moves[checked + incrementY+1] = -1
             for i in range(incrementY):
                 valid_moves[checked + i] = 1
             checked += 7 - mod_j
@@ -179,6 +185,8 @@ class Rook(Piece):
                     valid_moves[checked + incrementX] = 1
                 else:
                     valid_moves[checked + incrementX] = -1
+            if self.valid_position(mod_i+(incrementX+2), mod_j):
+                valid_moves[checked + incrementX+1] = -1
             for i in range(incrementX):
                 valid_moves[checked + i] = 1
 
@@ -193,6 +201,8 @@ class Rook(Piece):
                     valid_moves[mod_i-(incrementX+1)] = 1
                 else:
                     valid_moves[mod_i-(incrementX+1)] = -1
+            if self.valid_position(mod_i - (incrementX+2), mod_j):
+                valid_moves[mod_i-(incrementX+2)] = -1
             for i in range(mod_i-incrementX, mod_i):
                 if ((self.i-(self.side * i)) * 8 + self.j) in check:
                     valid_moves[checked + i] = 1
@@ -207,6 +217,8 @@ class Rook(Piece):
                     valid_moves[checked + mod_j-(incrementY+1)] = 1
                 else:
                     valid_moves[checked + mod_j-(incrementY+1)] = -1
+            if self.valid_position(mod_i, mod_j-(incrementY+2)):
+                valid_moves[checked + mod_j-(incrementY+2)] = -1
             for i in range(mod_j-incrementY, mod_j):
                 if (self.i * 8 + (self.j-(self.side * i))) in check:
                     valid_moves[checked + i] = 1
@@ -223,6 +235,8 @@ class Rook(Piece):
                     valid_moves[checked + incrementY] = 1
                 else:
                     valid_moves[checked + incrementY] = -1
+            if self.valid_position(mod_i, mod_j+(incrementY+2)):
+                valid_moves[checked + incrementY+1] = -1
             for i in range(incrementY):
                 if (self.i * 8 + (self.j+(self.side * i))) in check:
                     valid_moves[checked + i] = 1
@@ -237,6 +251,8 @@ class Rook(Piece):
                     valid_moves[checked + incrementX] = 1
                 else:
                     valid_moves[checked + incrementX] = -1
+            if self.valid_position(mod_i+(incrementX+2), mod_j):
+                valid_moves[checked + incrementX+1] = -1
             for i in range(incrementX):
                 if ((self.i+(self.side * i)) * 8 + self.j) in check:
                     valid_moves[checked + i] = 1        
@@ -435,6 +451,8 @@ class Bishop(Piece):
                     valid_moves[increment] = 1
                 else:
                     valid_moves[increment] = -1
+            if self.valid_position(mod_i-(increment+2), mod_j-(increment+2)):
+                valid_moves[increment+1] = -1
             for i in range(increment):
                 valid_moves[checked + i] = 1
             checked += min(mod_i, mod_j)
@@ -449,6 +467,8 @@ class Bishop(Piece):
                     valid_moves[checked + increment] = 1
                 else:
                     valid_moves[checked + increment] = -1
+            if self.valid_position(mod_i-(increment+2), mod_j+(increment+2)):
+                valid_moves[checked + increment+1] = -1
             for i in range(increment):
                 valid_moves[checked + i] = 1
             checked += min(mod_i, 7-mod_j)
@@ -463,6 +483,8 @@ class Bishop(Piece):
                     valid_moves[checked + increment] = 1
                 else:
                     valid_moves[checked + increment] = -1 
+            if self.valid_position(mod_i+(increment+2), mod_j-(increment+2)):
+                valid_moves[checked + increment+1] = -1 
             for i in range(increment):
                 valid_moves[checked + i] = 1
             checked += min(7-mod_i, mod_j)
@@ -477,6 +499,8 @@ class Bishop(Piece):
                     valid_moves[checked + increment] = 1
                 else:
                     valid_moves[checked + increment] = -1
+            if self.valid_position(mod_i+(increment+2), mod_j+(increment+2)):
+                valid_moves[checked + increment+1] = -1
             for i in range(increment):
                 valid_moves[checked + i] = 1
 
@@ -491,6 +515,8 @@ class Bishop(Piece):
                     valid_moves[increment] = 1
                 else:
                     valid_moves[increment] = -1
+            if self.valid_position(mod_i-(increment+2), mod_j-(increment+2)):
+                valid_moves[increment+1] = -1
             for i in range(increment):
                 if ((self.i-(self.side * (increment+1))) * 8 + (self.j-(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
@@ -506,6 +532,8 @@ class Bishop(Piece):
                     valid_moves[checked + increment] = 1
                 else:
                     valid_moves[checked + increment] = -1
+            if self.valid_position(mod_i-(increment+2), mod_j+(increment+2)):
+                valid_moves[checked + increment+1] = -1
             for i in range(increment):
                 if ((self.i-(self.side * (increment+1))) * 8 + (self.j+(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
@@ -521,6 +549,8 @@ class Bishop(Piece):
                     valid_moves[checked + increment] = 1
                 else:
                     valid_moves[checked + increment] = -1
+            if self.valid_position(mod_i+(increment+2), mod_j-(increment+2)):
+                valid_moves[checked + increment+1] = -1
             for i in range(increment):
                 if ((self.i+(self.side * (increment+1))) * 8 + (self.j-(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
@@ -536,6 +566,8 @@ class Bishop(Piece):
                     valid_moves[checked + increment] = 1
                 else:
                     valid_moves[checked + increment] = -1
+            if self.valid_position(mod_i+(increment+2), mod_j+(increment+2)):
+                valid_moves[checked + increment+1] = -1
             for i in range(increment):
                 if ((self.i+(self.side * (increment+1))) * 8 + (self.j+(self.side * (increment+1)))) in check:
                     valid_moves[checked + i] = 1
