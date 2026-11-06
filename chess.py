@@ -172,7 +172,7 @@ class Chess:
                     piece.valid_positions(self.board0, self.check, self.pieces[-2])
                 piece.calc_attacking(self.pieces)
 
-    def position_print(self):
+    def position_print0(self):
         print('    ', end='')
         for i in range(ord('a'), ord('i')):
             print(chr(i), end='  ')
@@ -184,6 +184,20 @@ class Chess:
                     print(' ' + str(self.board0[8 * i + j]), end='')
                 else:
                     print('  ' + str(self.board0[8 * i + j]), end='')
+            print('')
+
+    def position_print1(self):
+        print('    ', end='')
+        for i in range(ord('a'), ord('i')):
+            print(chr(i), end='  ')
+        print('')
+        for i in range(8):
+            print(8-i, end=' ')
+            for j in range(8):
+                if self.board1[8 * i + j] < 0:
+                    print(' ' + str(self.board1[8 * i + j]), end='')
+                else:
+                    print('  ' + str(self.board1[8 * i + j]), end='')
             print('')
     
     def valid_moves(self):
@@ -263,6 +277,7 @@ class Chess:
 
     def win(self, pieces, side, check):
         # win -> 1, draw -> 0, continue -> -1
+        print(check, pieces[-2].valid_moves)
 
         if check:
             if side == -1:
@@ -353,7 +368,7 @@ class Chess:
 
 chess = Chess()
 chess.initialization()
-chess.position_print()
+chess.position_print0()
 while True:
     correct = chess.player_move(chess.player)
     if correct == 1:
@@ -367,7 +382,7 @@ while True:
         break
     elif correct == 2:
         chess.player *= -1
-        chess.position_print()
+        chess.position_print0()
     else:
         print('enter valid move')
 
